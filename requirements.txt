@@ -1,0 +1,4 @@
+tvdatafeed
+python-dotenv
+requests
+pandas
