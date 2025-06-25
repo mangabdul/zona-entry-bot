@@ -1,16 +1,45 @@
-def check_zones(df):
+def is_bos_up(last, prev):
+    return (
+        last['high'] > prev['high'] and
+        last['low'] > prev['low'] and
+        (last['close'] - last['open']) > 0.5
+    )
+
+def is_bos_down(last, prev):
+    return (
+        last['high'] < prev['high'] and
+        last['low'] < prev['low'] and
+        (prev['open'] - prev['close']) > 0.5
+    )
+
+def check_zones(df, pair_name):
     last = df.iloc[-1]
     prev = df.iloc[-2]
 
-    if last['high'] > prev['high'] and last['low'] > prev['low']:
+    if is_bos_up(last, prev):
+        entry = round(last['close'], 2)
         return {
-            'pair': 'XAUUSD',
+            'pair': pair_name,
             'zone': 'BOS',
             'signal': 'BUY',
-            'entry': round(last['close'], 2),
-            'tp1': round(last['close'] + 3, 2),
-            'tp2': round(last['close'] + 6, 2),
-            'tp_max': round(last['close'] + 10, 2),
-            'sl': round(last['close'] - 5, 2)
+            'entry': entry,
+            'tp1': round(entry + entry * 0.0015, 2),
+            'tp2': round(entry + entry * 0.003, 2),
+            'tp_max': round(entry + entry * 0.006, 2),
+            'sl': round(entry - entry * 0.003, 2)
         }
+
+    elif is_bos_down(last, prev):
+        entry = round(last['close'], 2)
+        return {
+            'pair': pair_name,
+            'zone': 'BOS',
+            'signal': 'SELL',
+            'entry': entry,
+            'tp1': round(entry - entry * 0.0015, 2),
+            'tp2': round(entry - entry * 0.003, 2),
+            'tp_max': round(entry - entry * 0.006, 2),
+            'sl': round(entry + entry * 0.003, 2)
+        }
+
     return None

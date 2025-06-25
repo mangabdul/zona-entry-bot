@@ -3,9 +3,12 @@ from detector import check_zones
 from bot import send_signal
 import time
 
+symbols = [("XAUUSD", "5m"), ("BTCUSDT", "5m")]
+
 while True:
-    df = get_data("XAUUSD", "5m")
-    signal = check_zones(df)
-    if signal:
-        send_signal(signal)
-    time.sleep(60)  # Cek setiap 1 menit
+    for symbol, tf in symbols:
+        df = get_data(symbol, tf)
+        signal = check_zones(df, symbol)
+        if signal:
+            send_signal(signal)
+    time.sleep(60)
